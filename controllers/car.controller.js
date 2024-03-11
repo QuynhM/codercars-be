@@ -34,8 +34,9 @@ carController.getCars = async (req, res, next) => {
   
 	  // Query total count for pagination information
 	  const totalCarsCount = await Car.countDocuments();
+	  const totalPages = Math.ceil(totalCarsCount / perPage);
   
-	  sendResponse(res, 200, true, { cars: listOfFound, page, total:  Math.ceil(totalCarsCount / perPage) }, null, "Found list of cars success");
+	  sendResponse(res, 200, true, { cars: listOfFound, page, total:  totalPages }, null, "Found list of cars success");
 	} catch (err) {
 	  next(err);
 	}
