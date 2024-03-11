@@ -24,6 +24,6 @@ router.get("/template/:test", async(req,res,next)=>{
 
 // CAR
 const carAPI = require('./car.api.js');
-router.use('/car', carAPI);
+router.use('/cars', carAPI);
 
 module.exports = router;

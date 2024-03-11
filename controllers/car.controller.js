@@ -21,45 +21,50 @@ carController.createCar = async (req, res, next) => {
 };
 
 carController.getCars = async (req, res, next) => {
-	const filter = {};
+	const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
+	const perPage = 10; // Number of items per page
 
-	try{
-		//mongoose query
-		const listOfFound= await Car.find().limit(10).exec();
-		//this to query data from the reference and append to found result.
-		console.log("Car:",listOfFound)
-		sendResponse(res,200,true,{Car:listOfFound},null,"Found list of cars success");
-	
-	}catch(err){
-		next(err);
+  
+	try {
+	  // Mongoose query with pagination
+	  const listOfFound = await Car.find().skip((page - 1) * perPage).limit(perPage);
+  
+	  // Log the result for debugging
+	  console.log("Car:", listOfFound);
+  
+	  // Query total count for pagination information
+	  const totalCarsCount = await Car.countDocuments();
+  
+	  sendResponse(res, 200, true, { cars: listOfFound, page, total:  Math.ceil(totalCarsCount / perPage) }, null, "Found list of cars success");
+	} catch (err) {
+	  next(err);
 	}
-};
+  };
 
 carController.editCar = async (req, res, next) => {
+	const targetId = null;
+	const updateInfo = "";
+  
+	//options allow you to modify query. e.g new true return lastest update of data
+	const options = { new: true };
 	try {
-		const { id } = req.params;
-    	const updateInfo = req.body;
-
-		// Validate input
-		if (!updateInfo) {
-			throw new AppError(400, 'Bad Request', 'Update car Error');
-		  }
-		// mongoose query to find the car by ID and update it
-		const updatedCar = await Car.findByIdAndUpdate(id, updateInfo, {
-			new: true, // Return the modified document
-		});
-
-		if (!updatedCar) {
-			// If the car with the given ID is not found
-			throw new AppError(404, 'Not Found', 'Car not found');
-		}
-
-		// Send the response with the updated car data
-		sendResponse(res, 200, true, { Car: updatedCar }, null, 'Update Car Successfully');
+	  //mongoose query
+	  const updated = await car.findByIdAndUpdate(targetId, updateInfo, options);
+  
+	  sendResponse(
+		res,
+		200,
+		true,
+		{ car: updated },
+		null,
+		"Update Car Successfully!"
+	  );
 	} catch (err) {
-	next(err);
+	  next(err);
 	}
-};
+  };
+
+	   
 
 carController.deleteCar = async (req, res, next) => {
 	// empty target mean delete nothing
