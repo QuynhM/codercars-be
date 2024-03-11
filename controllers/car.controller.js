@@ -50,7 +50,7 @@ carController.editCar = async (req, res, next) => {
 	const options = { new: true };
 	try {
 	  //mongoose query
-	  const updated = await car.findByIdAndUpdate(targetId, updateInfo, options);
+	  const updated = await Car.findByIdAndUpdate(targetId, updateInfo, options);
   
 	  sendResponse(
 		res,
